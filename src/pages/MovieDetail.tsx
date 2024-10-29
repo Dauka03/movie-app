@@ -11,20 +11,17 @@ const MovieDetail: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
   const [isFavorite, setIsFavorite] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [videoTime, setVideoTime] = useState<number>(0); // Время видео
-  const [player, setPlayer] = useState<any>(null); // Плеер YouTube
+  const [videoTime, setVideoTime] = useState<number>(0);
+  const [player, setPlayer] = useState<any>(null);
 
   useEffect(() => {
-    // Загрузка деталей фильма
     if (id) detailStore.fetchMovieDetails(id);
 
-    // Извлечение тайм-кода из Local Storage
     const savedTime = localStorage.getItem(`videoTime_${id}`);
     if (savedTime) {
-      setVideoTime(Number(savedTime)); // Установите сохраненное время
+      setVideoTime(Number(savedTime));
     }
 
-    // Инициализация YouTube IFrame API
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName("script")[0];
@@ -32,19 +29,17 @@ const MovieDetail: React.FC = observer(() => {
 
     window.onYouTubeIframeAPIReady = () => {
       const newPlayer = new window.YT.Player("youtube-player", {
-        videoId: "nnHvWrbnnLs", // Используем ID видео
+        videoId: "nnHvWrbnnLs",
         playerVars: {
           autoplay: 0,
           controls: 1,
-          start: videoTime, // Начинать с сохраненного тайм-кода
+          start: videoTime,
         },
         events: {
           onReady: (event: any) => {
-            // Установить тайм-код при загрузке
             event.target.seekTo(videoTime, true);
           },
           onStateChange: (event: any) => {
-            // Сохранять тайм-код каждую секунду
             if (event.data === window.YT.PlayerState.PLAYING) {
               setInterval(() => {
                 const currentTime = Math.floor(event.target.getCurrentTime());
@@ -59,7 +54,7 @@ const MovieDetail: React.FC = observer(() => {
 
     return () => {
       if (player) {
-        player.destroy(); // Очистить плеер при размонтировании
+        player.destroy();
       }
     };
   }, [id, videoTime]);
@@ -69,7 +64,7 @@ const MovieDetail: React.FC = observer(() => {
   const handleAddToFavorites = () => {
     favoriteStore.addFavorite(movie as Movie);
     setIsFavorite(true);
-    setSnackbarOpen(true); // Показать уведомление
+    setSnackbarOpen(true);
   };
 
   const handleCloseSnackbar = () => {
@@ -89,7 +84,7 @@ const MovieDetail: React.FC = observer(() => {
       <Button
         variant="contained"
         onClick={handleAddToFavorites}
-        disabled={isFavorite} // Отключить, если уже добавлено в избранное
+        disabled={isFavorite}
         sx={{
           backgroundColor: isFavorite ? "green" : "primary.main",
           "&:hover": {
