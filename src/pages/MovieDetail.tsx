@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import detailStore from "../stores/DetailStore";
 import favoriteStore from "../stores/FavoriteStore";
 import { Button, Typography, Snackbar } from "@mui/material";
+import { Movie } from "../types/Movie";
 
 const MovieDetail: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -66,7 +67,7 @@ const MovieDetail: React.FC = observer(() => {
   const movie = detailStore.movie;
 
   const handleAddToFavorites = () => {
-    favoriteStore.addFavorite(movie);
+    favoriteStore.addFavorite(movie as Movie);
     setIsFavorite(true);
     setSnackbarOpen(true); // Показать уведомление
   };
